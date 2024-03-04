@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <title>Group 23 - NLP</title>
+
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <link href="/docs/5.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+  <!-- Favicons -->
+
+  <!-- Custom styles for this template -->
+  <link href="css/styles.css" rel="stylesheet">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="container" style="max-width: 800px">
+    <nav class="navbar mx-auto bg-light px-4 fixed-top">
+      <a class="navbar-brand" href="index.html">Big Data and Cloud Computing - Final Project</a>
+      <ul class="nav nav-pills justify-content-center">
+        <li class="nav-item"><a class="nav-link" href="index.html#projectIntroduction" style="color: black">Project
+            Introduction</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#aboutTeam" style="color: black">About the Team</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="EDA.html" style="color: black">EDA</a></li>
+        <li class="nav-item"><a class="nav-link" href="NLP.html" style="color: black">NLP</a></li>
+        <li class="nav-item"><a class="nav-link" href="ML.html" style="color: black">Machine Learning</a></li>
+        <li class="nav-item"><a class="nav-link" href="summary.html" style="color: black">Conclusion</a></li>
+      </ul>
+    </nav>
+
+
+
+
+
+    <br>
+    <h2>Machine Learning</h2>
+    <hr>
+    <br>
+    <h4>Summary</h4>
+    <br>
+    <p>
+      Reddit is a large online community with different opinions on different topics. From using NLP techniques, we
+      have extracted
+      a suite of topic and sentiment features, and subset language-specific reddit posts. Now, to use the data for
+      specific task, we are able to use
+      bag-of-words features to predict Ukrainian reddit scores with a 95% accuracy.
+    </p>
+
+    <div class="row py-3">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-6 img-responsive">
+            <img src="img/ML/comment_model.png" class="card-img-top" alt="...">
+          </div>
+          <div class="col-md-6 img-responsive">
+            <img src="img/ML/perf_comment.png" class="card-img-top" alt="...">
+          </div>
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><strong>FIGURE 1 </strong>(left)Model Performance from
+              Comment Features. (right)Model Performance from Comment Features on each commodity.<br>
+              <a
+                href="https://github.com/gu-anly502/fall-2022-reddit-big-data-project-project-group-23/blob/master/code/ML/Result_visualization.ipynb">Visualization
+                Code</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>
+      As our primary goal, we also predict commodity returns with sentiment and topic features. Financial asset returns
+      are
+      notoriously hard to predict. A positive R^2 in modeling means a better-than-guess prediction, and if the positive
+      R^2 stays long enough, it can be built into a trading signal. As <b>Figure 1</b> shows, even though most of
+      our models can
+      only generate negative R^2, we
+      can make a positive R^2 prediction using Gradient Boosting. This result is two-fold. On the one hand, reddit
+      data
+      has a low information-to-noise ratio for it to be used in commodity returns prediction. On the other hand, it
+      shows potential to generate decent prediction with optimal features and advanced modeling. The most remarkable
+      result is for commodity like Natural Gas,
+      Reddit shows strong predictive power with almost any models.
+    </p>
+    <br>
+    <hr>
+
+    <h4>Q5. Can Foreign Language Comments be used to Predict Comment Score? Using Transformation, Pipeline, and SparkML.
+    </h4>
+    <p>
+      We split the training and testing dataset by 0.7 and 0.3 ratio from Ukrainian comment dataset, with 12859 and 5462
+      posts
+      respectively. We utilize SparkML and Spark Pipeline to streamline the tokenize, word vectorization, and
+      machine learning process. Logistic
+      regression has the best performance with a 95.75 Accuracy.
+      We conclude that
+      bag-of-words approach text classification methods can be applied to any language that uses space to separate
+      words and perform well. The code can be found <a
+        href="https://github.com/gu-anly502/fall-2022-reddit-big-data-project-project-group-23/blob/master/code/ML/Predict_Comment_Score.ipynb">here</a>.
+    </p>
+    <br>
+    <hr>
+    <h4>Q7, Q9, & Q10. How to use Reddit Topics and Sentiments to Predict Commodity Returns?</h4>
+    <br>
+    <h4>Models</h4>
+    <br>
+    <h4>Gradient Boosting</h4>
+
+    <p>
+      <b>Boosting</b> refers to modifying a weak learner or a weak hypothesis to make it perform better.
+      A <b>weak hypothesis</b> or a <b>weak learner</b> is defined as one whose performance is at least
+      slightly better than a random chance.
+    </p>
+    <p>
+      In gradient boosting, decision trees are used as the weak learner and are parameterized using
+      gradient descent. Each tree obtains the instances it handles well and leaves the hard-to-handle
+      instances to the following trees. The model adds a fixed number of tree-structured weak learners
+      once a time and stops when the loss reaches an acceptable level or no longer improves on
+      external validation data. Thus, gradient boosting is a greedy algorithm that can quickly overfit
+      a training dataset. We tune several key hyperparameters to add constraints to the training process.
+    </p>
+    <ul>
+      <li><i>learning_rate</i>: The model shrinks the contribution of each tree by the specified
+        learning rate. default is 0.1</li>
+      <li><i>n_estimators</i>: The number of boosting stages to perform. More boosting stages
+        add more trees to the model and perform fairly better. There is a considered trade-off
+        between <i>learning_rate</i> and <i>n_estimators</i>, but we give a fair amount of
+        attempts for both parameters in the hope of the best performance.</li>
+      <li><i>max_depth</i>: The maximum depth limit the number of nodes in the tree. And it can
+        start with one node per tree.</li>
+      <li><i>subsample</i>: The value determines the fraction of samples to be used from
+        fitting individual base learners.</li>
+    </ul>
+    <p>We first set up lists of these parameters in their acceptable range with large intervals. After
+      looping through all combinations, we obtain the best set of parameters. We then derive new lists
+      around the result with smaller intervals. Using this method, we get close to the actual range of
+      possible best estimators. Although the models using different combinations are obtained through
+      training and validation datasets, we filter the estimators with the highest r-squared score from the
+      prediction on the test dataset to avoid overfitting.
+    </p>
+
+
+    <br>
+
+    <hr>
+
+    <h4>Random Forest Regressor</h4>
+
+    <p>
+      Random Forest is another ensemble method that enhances learning by grouping weak learners to form a single strong
+      learner. The robustness of Random Forest comes from the wisdom of crowds and works well on large datasets. Also,
+      decision trees are good at capturing non-linear relationships between input features and the target variable.
+    </p>
+
+    <p>
+      We use Random Forest Regressor model to predict commodity returns. Similar to Boosting, the parameters tuned in
+      the model are n_estimators and max_depth. Then we set up lists of these parameters and loop through all
+      combinations to get the best set of parameters. Finally, we filter out the estimators with the highest r-squared
+      score.
+    </p>
+
+    <ul>
+      <li><i>n_estimators</i>: the number of trees in the forest</li>
+      <li><i>max_depth</i>: The maximum depth limit the number of nodes in the tree</li>
+    </ul>
+
+
+    <br>
+    <hr>
+
+    <h4>Feedforward Neural Network</h4>
+    <p>
+      <strong>Feedforward Neural Network</strong> is a group of models using linear layers and activation.
+      It could be used to model non-linear relationships and dig into the deep insights of a dataset.
+      Gradient descent based optimizers and schedulers are used for the training process.
+      Neural Network is different from the previous two methods. It requires a large number of choices for training
+      hyper-parameters.
+    </p>
+    <p>
+      To avoid overfitting, we maintain 2 hidden layers for the network, with the units of the 2nd
+      hidden layer being 2 times the units of the 1st hidden layer.
+    </p>
+    <p>
+      We use an Adam optimizer, a linear scheduler with warmups and, the MSE loss function
+      for the optimization program.
+    </p>
+    <p>
+      We first try to find the best choice of hyper-parameters according to r-squared scores,
+      by training the model on the training dataset and then do validation on the validation dataset.
+      With the best choice of hyper-parameters, we do formal training on the overall training dataset and
+      get the r-squared scores on the testing dataset.
+    </p>
+    <ul>
+      <li><i>base_hidden_layer_units</i>: The base number of units for the first hidden layer.</li>
+      <li><i>learning_rate</i>: The variable deciding the scale of gradient changes applied to network
+        parameters.</li>
+      <li><i>epochs</i>: The time of optimization processes on the training dataset repeatedly.</li>
+      <li><i>activation</i>: The choice of activation function for hidden layers.</li>
+      <li><i>batch_size</i>: Size of batch to compute the loss. Updating parameters using the loss computed
+        on a batch of data points prevents the network from going into some local optimal regions.</li>
+      <li><i>max_grad_norm</i>: The value used to clip the parameter gradients before each update.</li>
+      <li><i>num_warmup_steps</i>: Warmup steps for the scheduler. Default 3.</li>
+    </ul>
+
+    <p>All the models' code can be found <a
+        href="https://github.com/gu-anly502/fall-2022-reddit-big-data-project-project-group-23/tree/master/code/ML">here.</a>
+    </p>
+    <br>
+
+    <hr>
+
+    <h4>Results</h4>
+
+    <div class="row py-3">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-6 img-responsive">
+            <img src="img/ML/comment_model.png" class="card-img-top" alt="...">
+          </div>
+          <div class="col-md-6 img-responsive">
+            <img src="img/ML/submission_model.png" class="card-img-top" alt="...">
+          </div>
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><strong>FIGURE 2 </strong>Performance of Different ML
+              Models. The left figure plots the performance using comment-generated features. The right figure plots the
+              performance using submission-generated features.<br>
+              <a
+                href="https://github.com/gu-anly502/fall-2022-reddit-big-data-project-project-group-23/blob/master/code/ML/Result_visualization.ipynb">Visualization
+                Code</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>
+      Because the market is very efficient, financial asset returns are hard to predict. From <b>FIGURE 2</b>,
+      even though
+      most models do not work well, gradient boosting can generate positive returns. Moreover, we notice that
+      comment-generated features generally have better results than submission-generated features.
+    </p>
+
+    <br>
+    <div class="row py-3">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-6 img-responsive">
+            <img src="img/ML/perf_comment.png" class="card-img-top" alt="...">
+          </div>
+          <div class="col-md-6 img-responsive">
+            <img src="img/ML/perf_submission.png" class="card-img-top" alt="...">
+          </div>
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;">
+              <b>FIGURE 3</b> Performance of Different ML
+              Models on Different Commodities. The left figure plots the performance using comment-generated features.
+              The right figure plots the
+              performance using submission-generated features.<br>
+              <a
+                href="https://github.com/gu-anly502/fall-2022-reddit-big-data-project-project-group-23/blob/master/code/ML/Result_visualization.ipynb">Visualization
+                Code</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>
+      <b>FIGURE 3</b> plots the model performance on each asset. It is clear to see that some assets can be better
+      predicted
+      than others. Predictions on Natural Gas returns are almost always better than other commodities.
+    </p>
+    <div class="row py-4">
+      <div class="col-md-12">
+        <div class="card p-0" style="border: none">
+          <img src="img/ML/feature_importance.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><strong>FIGURE 4 </strong>Feature Importance on Natural
+              Gas Prediction.<a
+                href="https://github.com/gu-anly502/fall-2022-reddit-big-data-project-project-group-23/blob/master/code/ML/feature_importance.ipynb">Visualization
+                Code.</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>
+      <b>FIGURE 4</b> plots the feature importance of gradient boosting method on natural gas prediction. The first
+      topic
+      related to [people, city, vote, crimea, putin, territory, state, country, force, belarus] has the best predictive
+      power. Topic timeseries and other commodity features also show strong importance in gradient boosting method.
+    </p>
+    <hr>
+    <br>
+  </div> <!-- container -->
+  <footer class="blog-footer">
+    <p>
+      <a href="#">Back to top</a>
+    </p>
+  </footer>
+
+</body>
+
+</html>
