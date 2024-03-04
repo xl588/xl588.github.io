@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <title>Group 23 - EDA</title>
+
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <link href="/docs/5.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+  <!-- Favicons -->
+
+  <!-- Custom styles for this template -->
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="container" style="max-width: 800px">
+    <nav class="navbar mx-auto bg-light px-4 fixed-top">
+      <a class="navbar-brand" href="index.html">Big Data and Cloud Computing - Final Project</a>
+      <ul class="nav nav-pills justify-content-center">
+        <li class="nav-item"><a class="nav-link" href="index.html#projectIntroduction" style="color: black">Project
+            Introduction</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#aboutTeam" style="color: black">About the Team</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="EDA.html" style="color: black">EDA</a></li>
+        <li class="nav-item"><a class="nav-link" href="NLP.html" style="color: black">NLP</a></li>
+        <li class="nav-item"><a class="nav-link" href="ML.html" style="color: black">Machine Learning</a></li>
+        <li class="nav-item"><a class="nav-link" href="summary.html" style="color: black">Conclusion</a></li>
+      </ul>
+    </nav>
+
+
+
+
+
+    <br>
+    <h2>Data Exploration</h2>
+    <hr>
+    <br>
+
+    <p>
+      The original dataset used for analysis is <a href="https://arxiv.org/pdf/2001.08435.pdf" target="_blank">The
+        Pushshift Reddit Dataset</a>. Our given data is from January 2021 to
+      August 2022.</mark>
+    </p>
+    <br>
+
+
+
+    <h4>
+      About the Raw Reddit Dataset
+    </h4>
+    <br>
+    <p>
+      The format of the dataset is parquet and made up of two components: "submissions" and "comments". The submissions
+      file contains 643,255,528 rows and 68 columns, and the comment file contains 4,473,556,762 rows and 21 columns.
+
+      <!-- 
+      <mark>???(check) Both of the columns contain nested columns??? Elaborate more on the schema structure</mark> 
+      -->
+    </p>
+
+    <p>
+      The column that we looked into first was the 'subreddit' column. A <strong>subreddit</strong> is a smaller
+      community in social media Reddit that contains posts associated with the topic. It is the starting point for our
+      <strong>Data Selection</strong>.
+    </p>
+
+    <p>
+      There are some columns that we potentially will use in our project, including numerical columns such as
+      "num_comments"(Submission), "score"(Comment), text columns such as "title"(Submission),
+      "selftext"(Submission),
+      "body"(Comment), and boolean columns such as "over_18", "disable_comments".
+    </p>
+
+    <h4>
+      Subreddit Selection
+    </h4>
+    <br>
+    <p>
+      We decide to replicate the data collection process from <a href="https://arxiv.org/abs/2206.05107">this paper</a>.
+      We select our data from the 12 subreddits in <b>TABLE 1</b>. The "RU Conflict" category directly focuses on the
+      Russia-Ukraine conflict, hence we use all the data from these subreddits. The "Military Related" category contains
+      general discussion on war and military-related
+      topics. To make all the submissions and comments relevant to our topic, we further filter the content and title
+      columns of the "Military Related" subreddits to ensure they contain keywords like ukraine, russia, Putin, etc.
+    </p>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 30%; text-align: center;">Category</th>
+            <th scope="col" style="width: 70%; text-align: center;">Subreddit Name</th>
+          </tr>
+        </thead>
+        <tbody style="text-align: center;">
+          <tr>
+            <td>RU Conflict</td>
+            <td>ukraine, ukraina, UkraineConflict, RussiaUkraineWar2022, UkrainianConflict, UkraineWarReports,
+              UkraineInvasionVideos, UkraineWarVideoReport</td>
+
+          </tr>
+          <tr>
+
+            <td>Military Related</td>
+            <td>war, CombatFootage, CredibleDefense, geopolitics</td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+      <p style="font-weight: lighter; text-align: center;"><b>TABLE 1:</b> Selected subreddits</p>
+
+    </div>
+
+
+    <br>
+
+    <h4>
+      Data Engineering
+    </h4>
+    <br>
+    <p>
+      Our source data from the above subreddits is built in this <a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/Build%20Data.ipynb">notebook</a>.
+    </p>
+    <p>
+      Because our selected reddit posts about the Russia-Ukraine conflict can contain multiple languages, we used John
+      Snow's
+      language detection model, <b>detect_language_375</b>, to create <b>"English"</b>,
+      <b>"Russian"</b>, and <b>"Ukrainian"</b> language percentage columns on the submission data.
+      <a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Language%20Detection.ipynb">Notebook</a>
+      is for creating the three language columns.
+    </p>
+    <p>
+      We also used Regex to find <b>Market</b> and <b>Energy</b> related reddit posts in different languages, using this
+      <a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/language-topic-distribution-pie-plot.ipynb">notebook</a>.
+    </p>
+    <br>
+
+    <h4>
+      Exploratory Analysis
+    </h4>
+    <br>
+    <p>
+      <b>FIGURE 1</b> counts the number of unique submission IDs in the selected subreddits. The resulting subset from
+      the
+      original dataset indicates that the submissions are more active after the Russia-Ukraine conflict became a global
+      issue. This corroborates that we are collecting the right data.
+    </p>
+
+    <!-- IMAGE: number of posts time series -->
+    <div class="row py-5">
+      <div class="col-md-12">
+        <div class="card p-0" style="border: none">
+          <img src="img/EDA/submission_time_series_bar_plot.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><b>FIGURE 1:</b>Starting from February 2022, number of
+              posts
+              in the dataset
+              increased drastically when the Russia-Ukraine conflict became a global issue.<a
+                href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/time_barplot.ipynb">Visualization
+                Code</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- IMAGE END -->
+    <p>
+      Our initial steps of EDA are to check data size, missing values, etc. <b>TABLE 2</b> gives an
+      overview about
+      the basic information of the filtered reddit data and our collected external commodity price data.
+    </p>
+    <br>
+    <table class="table table-bordered table-hover table-condensed">
+      <thead style="text-align: center">
+        <tr>
+          <th title="Field #1" style="width: 25%">Stats</th>
+          <th title="Field #2" style="width: 25%">Reddit Submissions</th>
+          <th title="Field #3" style="width: 25%">Reddit Comments</th>
+          <th title="Field #4" style="width: 25%">Commodity Prices</th>
+        </tr>
+      </thead>
+      <tbody style="text-align: center">
+        <tr>
+          <td>Size</td>
+          <td>0.05G</td>
+          <td>1.4G</td>
+          <td>166KB</td>
+        </tr>
+        <tr>
+          <td>Columns</td>
+          <td>69</td>
+          <td>22</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>Rows</td>
+          <td>384,972</td>
+          <td>9,993,790</td>
+          <td>1,455</td>
+        </tr>
+        <tr>
+          <td>Missing Values</td>
+          <td>54,375[delete]; 49,239[removed]</td>
+          <td>367,528[delete]; 741,394[removed]</td>
+          <td>2,927</td>
+        </tr>
+        <tr>
+          <td>Startdate</td>
+          <td>2022-01-01</td>
+          <td>2022-01-01</td>
+          <td>2018-01-02</td>
+        </tr>
+        <tr>
+          <td>Enddate</td>
+          <td>2022-08-31</td>
+          <td>2022-08-31</td>
+          <td>2022-08-31</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-weight: lighter; text-align: center;"><b>TABLE 2:</b> Basic Information of the Selected Reddit and
+      External Commodity Data. Note:[deleted] is deleted by author; [removed] is removed by moderator.<a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Comments_basic.ipynb">Comments
+        Code</a> and <a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Submissions_basic.ipynb">Submissions
+        Code</a>.</p>
+    <br>
+    <p>
+      Russia-Ukraine Conflict was declared on Feb 24th 2022. We collected reddit and commodity price data before that
+      time in order to compare the trends before and after the event.
+    </p>
+    <br>
+    <table class="table table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th title="Field #1" style="width: 12%; text-align: center;">Subreddit</th>
+          <th title="Field #2" style="width: 22%; text-align: center;"># of Submissions</th>
+          <th title="Field #3" style="width: 22%; text-align: center;"># of Comments</th>
+          <th title="Field #4" style="width: 22%; text-align: center;">Active Users</th>
+          <th title="Field #5" style="width: 22%; text-align: center;">Contains Foreign Langauge</th>
+        </tr>
+      </thead>
+      <tbody style="text-align: center">
+        <tr>
+          <td>CombatFootage</td>
+          <td align="right">107</td>
+          <td align="right">270539</td>
+          <td align="right">50383</td>
+          <td>36.45%</td>
+        </tr>
+        <tr>
+          <td>CredibleDefense</td>
+          <td align="right">169</td>
+          <td align="right">64817</td>
+          <td align="right">4828</td>
+          <td>18.34%</td>
+        </tr>
+        <tr>
+          <td>RussiaUkraineWar2022</td>
+          <td align="right">25513</td>
+          <td align="right">481116</td>
+          <td align="right">48934</td>
+          <td>27.33%</td>
+        </tr>
+        <tr>
+          <td>UkraineConflict</td>
+          <td align="right">13394</td>
+          <td align="right">72528</td>
+          <td align="right">10933</td>
+          <td>29.79%</td>
+        </tr>
+        <tr>
+          <td>UkraineInvasionVideos</td>
+          <td align="right">14360</td>
+          <td align="right">116823</td>
+          <td align="right">16474</td>
+          <td>30.88%</td>
+        </tr>
+        <tr>
+          <td>UkraineWarReports</td>
+          <td align="right">7746</td>
+          <td align="right">78552</td>
+          <td align="right">14175</td>
+          <td>30.03%</td>
+        </tr>
+        <tr>
+          <td>UkraineWarVideoReport</td>
+          <td align="right">45260</td>
+          <td align="right">1724675</td>
+          <td align="right">157469</td>
+          <td>29.08%</td>
+        </tr>
+        <tr>
+          <td>UkrainianConflict</td>
+          <td align="right">86925</td>
+          <td align="right">1987549</td>
+          <td align="right">129635</td>
+          <td>25.03%</td>
+        </tr>
+        <tr>
+          <td>geopolitics</td>
+          <td align="right">60</td>
+          <td align="right">23085</td>
+          <td align="right">5526</td>
+          <td>13.33%</td>
+        </tr>
+        <tr>
+          <td>ukraina</td>
+          <td align="right">17975</td>
+          <td align="right">158422</td>
+          <td align="right">25841</td>
+          <td>50.05%</td>
+        </tr>
+        <tr>
+          <td>ukraine</td>
+          <td align="right">172818</td>
+          <td align="right">4990804</td>
+          <td align="right">262567</td>
+          <td>27.01%</td>
+        </tr>
+        <tr>
+          <td>war</td>
+          <td align="right">645</td>
+          <td align="right">24880</td>
+          <td align="right">7485</td>
+          <td>21.86%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-weight: lighter; text-align: center;"><b>TABLE 3:</b>Summary Statistics of the Selected Subreddits.
+      <a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Comments_basic.ipynb">Comments
+        Code</a> and <a
+        href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Submissions_basic.ipynb">Submissions
+        Code</a>.
+    </p>
+    <br>
+    <p>
+      <b>TABLE 3</b> shows statistics of each collected subreddit. As shown, some subreddits have many more users
+      and posts than the others. "ukraine", "UkraineWarVideoReport", and "UkrainianConflict" are the top three active
+      subreddits.
+      By using John Snow's language detection model, <b>detect_language_375</b>, we find that there is a significant
+      number
+      of foreign languages in the reddit posts, containing Ukrainian and Russian.
+    </p>
+
+    <!-- IMAGE: number of submission in different languages -->
+    <div class="row py-5">
+
+      <div class="col-md-12">
+        <div class="card p-0" style="border: none">
+          <img src="img/EDA/submission_count_languages.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><b>FIGURE 2:</b>Volumes of submissions in English,
+              Ukrainian, and
+              Russian over the observation period.<a
+                href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/language-timeseries-line-chart.ipynb">Visualization
+                Code</a>.</p>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE: schema END -->
+
+    </div>
+    <!-- IMAGE END -->
+
+    <p>
+      The volumes of Reddit submissions in these three languages from selected subreddits changed similarly from January
+      2022 to August 2022, as shown in <b>FIGURE 2:</b>. The peak for Ukrainian submissions arrived in February, earlier
+      than the other two languages
+      in March. The submission count in English started decreasing ever since, while for Russian and Ukrainian
+      submissions, the number started to rise again around July 2022.
+    </p>
+    <p>
+      To categorize the submission records by language, we used Spark NLP pre-trained language detection model
+      <b>detect_language_375</b> and obtained the prediction confidences toward these three languages for each
+      submission content. With the confidence values, we can define dummy variables for three languages by any desired
+      bar. For this plot, the variables are set to be True by confidence over 90%. Please note that since there are
+      posts with prediction confidence lower than 90% for all three designated languages, the total number of
+      submissions in this plot will not add up to the length of our dataset.
+    </p>
+
+    <!-- IMAGE: body length comparison -->
+    <div class="row py-5">
+
+      <div class="col-md-12">
+        <div class="card p-0" style="border: none">
+          <img src="img/EDA/body_length.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><b>FIGURE 3:</b>Word Count Distribution of Comment Body
+              in Two
+              Categorizations.<a
+                href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/comment-body-length-distribution-plot.ipynb">Visualization
+                Code</a>.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- IMAGE END -->
+
+    <p>
+      The above charts show the distribution of the number of words. Overall, most comments contain less than 100 words.
+      From
+      the
+      first part, it can be observed that submitters tend to have longer comments
+      than commenters. From the second part, comments above the average score tend to be longer. These findings are
+      intuitively expected.
+    </p>
+
+    <!-- IMAGE: topic different languages crossposts comparison -->
+    <div class="row py-5">
+
+      <div class="col-md-12">
+        <div class="card p-0" style="border: none">
+          <img src="img/EDA/topic_diff_languages.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <p style="font-weight: lighter; text-align: center;"><b>FIGURE 4:</b>Topic distribution for submissions in
+              differnet
+              language.<a
+                href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/language-topic-distribution-pie-plot.ipynb">Visualization
+                Code</a>.</p>
+          </div>
+        </div>
+
+        <!-- IMAGE: schema END -->
+      </div>
+      <!-- IMAGE END -->
+
+
+      <p>
+        For the example topics <i>Market</i> and <i>Energy</i>, they only take a small part in the overall discussions.
+        Nevertheless, these two topics are mentioned more frequently in Russian and Ukrainian posts than in English.
+      </p>
+      <p>
+        To find the distribution of posts around specific topics, we utilized Spark SQL <b>rlike</b> function and
+        filtered all the posts with keywords like <mark>stock/foreign exchange/commodity/trading</mark>,
+        <mark>energy/crude oil/natural gas</mark> in Russian, Ukrainian, and English vocabularies respectively. Later,
+        when we conduct topic modeling, we can also plug keywords and topics detected into the regex filter and create
+        visualizations like this.
+      </p>
+
+      <p>
+        Our main goal is to use topics and sentiments in Russia-Ukraine Conflict reddits to explain price movement in
+        the commodity market. Therefore, we collected Commodity Prices from investing.com as our <b>External Data</b>.
+      </p>
+      <br>
+      <table class="table table-bordered table-hover table-condensed">
+        <thead>
+          <tr>
+            <th title="Field #1" style="width: 20%; text-align: center;">Stats</th>
+            <th title="Field #2" style="width: 10%; text-align: center;">Observations</th>
+            <th title="Field #3" style="width: 10%; text-align: center;">Mean</th>
+            <th title="Field #4" style="width: 10%; text-align: center;">Std</th>
+            <th title="Field #5" style="width: 10%; text-align: center;">Min</th>
+            <th title="Field #6" style="width: 10%; text-align: center;">25%</th>
+            <th title="Field #7" style="width: 10%; text-align: center;">50%</th>
+            <th title="Field #8" style="width: 10%; text-align: center;">75%</th>
+            <th title="Field #9" style="width: 10%; text-align: center;">Max</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Barley</td>
+            <td align="right">1149</td>
+            <td align="right">1897.88</td>
+            <td align="right">491.47</td>
+            <td align="right">1305.50</td>
+            <td align="right">1518.50</td>
+            <td align="right">1817.50</td>
+            <td align="right">2100.00</td>
+            <td align="right">3261.00</td>
+          </tr>
+          <tr>
+            <td>Cocoa</td>
+            <td align="right">1178</td>
+            <td align="right">2434.53</td>
+            <td align="right">195.72</td>
+            <td align="right">1895.00</td>
+            <td align="right">2314.00</td>
+            <td align="right">2436.00</td>
+            <td align="right">2552.00</td>
+            <td align="right">3054.00</td>
+          </tr>
+          <tr>
+            <td>Coffee</td>
+            <td align="right">1177</td>
+            <td align="right">138.38</td>
+            <td align="right">48.13</td>
+            <td align="right">86.65</td>
+            <td align="right">104.10</td>
+            <td align="right">118.20</td>
+            <td align="right">158.70</td>
+            <td align="right">258.35</td>
+          </tr>
+          <tr>
+            <td>Corn Futures</td>
+            <td align="right">1193</td>
+            <td align="right">459.15</td>
+            <td align="right">133.72</td>
+            <td align="right">302.75</td>
+            <td align="right">362.75</td>
+            <td align="right">387.25</td>
+            <td align="right">557.25</td>
+            <td align="right">818.25</td>
+          </tr>
+          <tr>
+            <td>Crude Oil</td>
+            <td align="right">1268</td>
+            <td align="right">62.73</td>
+            <td align="right">20.48</td>
+            <td align="right">-37.63</td>
+            <td align="right">52.07</td>
+            <td align="right">61.35</td>
+            <td align="right">70.78</td>
+            <td align="right">123.70</td>
+          </tr>
+          <tr>
+            <td>Heating Oil</td>
+            <td align="right">1263</td>
+            <td align="right">2.06</td>
+            <td align="right">0.76</td>
+            <td align="right">0.61</td>
+            <td align="right">1.70</td>
+            <td align="right">1.98</td>
+            <td align="right">2.19</td>
+            <td align="right">5.14</td>
+          </tr>
+          <tr>
+            <td>Natural Gas</td>
+            <td align="right">1268</td>
+            <td align="right">3.35</td>
+            <td align="right">1.68</td>
+            <td align="right">1.48</td>
+            <td align="right">2.40</td>
+            <td align="right">2.78</td>
+            <td align="right">3.73</td>
+            <td align="right">9.68</td>
+          </tr>
+          <tr>
+            <td>Newcastle Coal</td>
+            <td align="right">1191</td>
+            <td align="right">130.71</td>
+            <td align="right">97.25</td>
+            <td align="right">48.50</td>
+            <td align="right">67.85</td>
+            <td align="right">97.15</td>
+            <td align="right">141.58</td>
+            <td align="right">440.00</td>
+          </tr>
+          <tr>
+            <td>Oats</td>
+            <td align="right">1176</td>
+            <td align="right">371.37</td>
+            <td align="right">151.57</td>
+            <td align="right">220.75</td>
+            <td align="right">273.19</td>
+            <td align="right">300.50</td>
+            <td align="right">403.81</td>
+            <td align="right">807.00</td>
+          </tr>
+          <tr>
+            <td>RBOB Gasoline</td>
+            <td align="right">1262</td>
+            <td align="right">1.92</td>
+            <td align="right">0.69</td>
+            <td align="right">0.41</td>
+            <td align="right">1.48</td>
+            <td align="right">1.90</td>
+            <td align="right">2.16</td>
+            <td align="right">4.31</td>
+          </tr>
+          <tr>
+            <td>Rough Rice</td>
+            <td align="right">1177</td>
+            <td align="right">12.99</td>
+            <td align="right">1.94</td>
+            <td align="right">9.78</td>
+            <td align="right">11.70</td>
+            <td align="right">12.56</td>
+            <td align="right">13.74</td>
+            <td align="right">22.07</td>
+          </tr>
+          <tr>
+            <td>Soybean Meal Futures</td>
+            <td align="right">1184</td>
+            <td align="right">348.65</td>
+            <td align="right">54.63</td>
+            <td align="right">280.00</td>
+            <td align="right">303.77</td>
+            <td align="right">329.40</td>
+            <td align="right">391.65</td>
+            <td align="right">521.90</td>
+          </tr>
+          <tr>
+            <td>Soybean Oil Futures</td>
+            <td align="right">1200</td>
+            <td align="right">41.72</td>
+            <td align="right">17.05</td>
+            <td align="right">24.99</td>
+            <td align="right">28.59</td>
+            <td align="right">31.70</td>
+            <td align="right">57.95</td>
+            <td align="right">90.60</td>
+          </tr>
+          <tr>
+            <td>Sugar #11</td>
+            <td align="right">1181</td>
+            <td align="right">14.53</td>
+            <td align="right">3.04</td>
+            <td align="right">9.21</td>
+            <td align="right">12.15</td>
+            <td align="right">13.36</td>
+            <td align="right">17.66</td>
+            <td align="right">20.42</td>
+          </tr>
+          <tr>
+            <td>Wheat</td>
+            <td align="right">1191</td>
+            <td align="right">615.65</td>
+            <td align="right">172.68</td>
+            <td align="right">416.50</td>
+            <td align="right">504.25</td>
+            <td align="right">541.00</td>
+            <td align="right">693.00</td>
+            <td align="right">1425.25</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-weight: lighter; text-align: center;"><b>TABLE 4:</b>Summary Statistics of the External Data
+        Commodity Prices. Note:1.Due to difference in trading rules, commodity futures can have different number of
+        trading days.2.Crude Oil had negative price during Covid when cost of carry exceeded intrinsic value.<a
+          href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Commodity%20EDA.ipynb">Visualization
+          Code</a>.
+      </p>
+
+      <br>
+      <br>
+      <p>Because it is rare for people to buy commodities at spot price with immediate payment and delivery, we
+        collected futures contract prices, which capture market supply and demand more accurately. Above <b>TABLE 4</b>
+        shows the summary statistics of 15 kinds of commodities. We choose food and energy commodities because they are
+        more related to normal people's daily lives, thus are more related to Reddit users.</p>
+      <br>
+
+      <!-- IMAGE: All Timeseries -->
+      <div class="row py-5">
+
+        <div class="col-md-12">
+          <div class="card p-0" style="border: none">
+            <img src="img/EDA/all_timeseries.png" class="card-img-top" alt="...">
+          </div>
+        </div>
+        <p style="font-weight: lighter; text-align: center;"><b>FIGURE 5:</b> Timeseries of Reddit and External Data.<a
+            href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Commodity%20Time%20Series.ipynb">Visualization
+            Code</a>.
+        </p>
+      </div>
+      <!-- IMAGE: All Timeseries END -->
+
+      <p>To study the intertemporal commodity price impact from Reddit, we plotted all the time series together to have
+        a
+        direct observation. As shown from the <b>FIGURE 5</b>, some commodities had a clear uptrend after the conflict
+        declared. <mark>"Barley", "Corn", "Crude Oil", "Heating Oil", "Natural Gas", "Newcastle Coal", "RBOb Gasoline",
+          "Soybean Meal", and "Wheat" all had an immediate rise in prices at the end of February.</mark> This price
+        movement is
+        in line with our expectation that the conflict has disrupted production and trade of several commodities,
+        particularly
+        those where Russia and Ukraine are key exporters, including energy, and grains.</p>
+
+      <div class="row py-5">
+        <div class="col-md-12">
+          <embed type="text/html" src="img/EDA/price_change.html" width="900" height="700">
+        </div>
+        <p style="font-weight: lighter; text-align: center;"><b>FIGURE 6:</b> Commodity Price Changes Since Feb 24
+          2022.<a
+            href="https://github.com/gu-anly502/fall-2022-project-eda-adb-project-group-23/blob/main/visualize_code/Commodity%20Price%20Change.ipynb">Visualization
+            Code</a>.
+        </p>
+      </div>
+
+      <p>While many commodities had an impact from the event, some commodity prices recover faster than others like
+        Wheat
+        and Barley. <b>FIGURE 6</b> shows that <b>Wheat</b> and <b>Barley</b> had 17% and 16% increases in one month.
+        <mark>But after 6
+          months at the end of August, both Wheat and Barley's prices dropped below Feb 24's level.</mark> Later in our
+        study, it
+        would be interesting to find out if our Reddit data can explain this price reversion.
+      </p>
+
+
+    </div> <!-- container -->
+
+
+    <footer class="blog-footer">
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+
+
+</body>
+
+</html>
